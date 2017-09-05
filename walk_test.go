@@ -6,7 +6,7 @@ import (
 )
 
 func TestWalkRef(t *testing.T) {
-	rep, err := OpenRepository("tdata/repo1")
+	rep, err := OpenRepository("tdata/repo1.git")
 	if err != nil {
 		t.Errorf("Could not open test repository:%v", err)
 	}
@@ -22,7 +22,7 @@ func TestWalkRef(t *testing.T) {
 }
 
 func TestGetBlobs(t *testing.T) {
-	rep, err := OpenRepository("tdata/repo1")
+	rep, err := OpenRepository("tdata/repo1.git")
 	if err != nil {
 		t.Errorf("Could not open test repository:%v", err)
 	}
