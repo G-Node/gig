@@ -2,7 +2,7 @@ package gig
 
 import "fmt"
 
-func (repo *Repository) WalkRef(refname string) (map[SHA1]*Commit, error) {
+func (repo *Repository) WalkRef(refname string, goOn func(SHA1) bool) (map[SHA1]*Commit, error) {
 	head, err := repo.OpenRef(refname)
 	if err != nil {
 		return nil, err
@@ -14,21 +14,22 @@ func (repo *Repository) WalkRef(refname string) (map[SHA1]*Commit, error) {
 	}
 
 	commits := make(map[SHA1]*Commit)
-	repo.walkCommitTree(commits, HId)
+	repo.walkCommitTree(commits, HId, goOn)
 	return commits, nil
 }
 
-func (repo *Repository) walkCommitTree(commits map[SHA1]*Commit, commitId SHA1) error {
+func (repo *Repository) walkCommitTree(commits map[SHA1]*Commit, commitId SHA1,
+	goOn func(SHA1) bool) error {
 	commit, err := repo.OpenObject(commitId)
 	commit.Close()
 	if err != nil {
 		return err
 	}
 
-	if _, ok := commits[commitId]; !ok {
+	if _, ok := commits[commitId]; !ok && goOn(commitId) {
 		commits[commitId] = commit.(*Commit)
 		for _, parent := range commit.(*Commit).Parent {
-			repo.walkCommitTree(commits, parent)
+			repo.walkCommitTree(commits, parent, goOn)
 		}
 		return nil
 	} else {

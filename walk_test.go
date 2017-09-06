@@ -10,7 +10,9 @@ func TestWalkRef(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not open test repository:%v", err)
 	}
-	commits, err := rep.WalkRef("tag1")
+	commits, err := rep.WalkRef("tag1", func(commitId SHA1) bool {
+		return true
+	})
 	if err != nil {
 		t.Errorf("Could not walk master repository:%v", err)
 		return
