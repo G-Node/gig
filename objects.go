@@ -216,6 +216,10 @@ func (b *Blob) Read(data []byte) (n int, err error) {
 	return
 }
 
+func MakeAnnexBlob(fp *os.File, size int64) *Blob {
+	return *Blob{gitObject{otype: ObjBlob, size: size, source: fp}}
+}
+
 //Tag represents a git tag object.
 type Tag struct {
 	gitObject
