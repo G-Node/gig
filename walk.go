@@ -77,7 +77,6 @@ func (repo *Repository) GetBlobsForTree(tree *Tree, blobs map[SHA1]*Blob) error 
 
 			}
 		}
-		tree.Next()
 	}
 	return tree.Err()
 }
