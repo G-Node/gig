@@ -39,10 +39,10 @@ func (repo *Repository) walkCommitTree(commits map[SHA1]*Commit, commitId SHA1,
 
 func (repo *Repository) GetBlobsForCommit(commit *Commit, blobs map[SHA1]*Blob) error {
 	treeOb, err := repo.OpenObject(commit.Tree)
-	treeOb.Close()
 	if err != nil {
 		return err
 	}
+	defer treeOb.Close()
 
 	tree, ok := treeOb.(*Tree)
 	if !ok {
@@ -59,7 +59,6 @@ func (repo *Repository) GetBlobsForTree(tree *Tree, blobs map[SHA1]*Blob) error 
 		switch trEntry.Type {
 		case ObjBlob:
 			if blobOb, err := repo.OpenObject(trEntry.ID); err != nil {
-				blobOb.Close()
 				return err
 			} else {
 				blobs[trEntry.ID] = blobOb.(*Blob)
@@ -67,7 +66,6 @@ func (repo *Repository) GetBlobsForTree(tree *Tree, blobs map[SHA1]*Blob) error 
 			}
 		case ObjTree:
 			if treeOb, err := repo.OpenObject(trEntry.ID); err != nil {
-				treeOb.Close()
 				return err
 			} else {
 				if err = repo.GetBlobsForTree(treeOb.(*Tree), blobs); err != nil {
